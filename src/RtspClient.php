@@ -10,9 +10,7 @@ class RtspClient {
   private array $options = [];
   private string $user = '';
   private string $password = '';
-
-  private  $socket;
-
+  private $socket;
 
   public function init(string $url): bool {
     $parsed = parse_url($url);
@@ -43,20 +41,6 @@ class RtspClient {
     return true;
   }
 
-  /**
-   * @param string $user
-   */
-  public function setUser(string $user): void {
-    $this->user = $user;
-  }
-
-  /**
-   * @param string $password
-   */
-  public function setPassword(string $password): void {
-    $this->password = $password;
-  }
-
   public function send($method, $uri): array {
     $request = $method." ".$uri." RTSP/1.0\r\n";
     $request .= "CSeq: ".$this->cSequence++."\r\n";
@@ -77,31 +61,6 @@ class RtspClient {
     }
 
     return $this->interpretResponse($parsedResponse);
-  }
-
-  public function authenticateBasic() {
-    $this->options['Authorization'] = sprintf('Basic %s', base64_encode($this->user.":".$this->password));
-  }
-
-  public function detectRoute($ip, $port): ?array {
-    foreach ($this->routes() as $key => $route) {
-      $uri = sprintf('rtsp://%s:%s%s', $ip, $port, $route);
-      try {
-        $response = $this->send('DESCRIBE', $uri);
-        if ($response['headers']['code'] == '404') {
-          continue;
-        }
-
-        return [
-          'route'    => $uri,
-          'response' => $response,
-        ];
-      } catch (\Exception $e) {
-        echo "ERROR MSG:".$e->getCode()."\n";
-      }
-    }
-
-    return null;
   }
 
   public function authenticateFromResponse(string $uri, string $method, array $response) {
@@ -143,20 +102,6 @@ class RtspClient {
     };
 
     $this->options['Authorization'] = $authorisation;
-  }
-
-  public function authenticateAndDescribe(string $url, string $user, string $password, array $response): array {
-    $method = 'DESCRIBE';
-
-    $this->setUser($user);
-    $this->setPassword($password);
-    $this->authenticateFromResponse(
-      $url,
-      $method,
-      $response
-    );
-
-    return $this->send($method, 'rtsp://93.125.0.74:554/');
   }
 
   private function calculateDigestHash($method): string {
