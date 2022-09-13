@@ -30,12 +30,12 @@ function rtspRequestHandler(string $method, Request $request, Response $response
 
         $result = $client->send($method, $url);
         if ($result) {
-            if ($result['code'] === '401') {
-                $client->authenticateFromResponse($url, $method, $result);
+            if ($result['headers']['code'] === '401') {
+                $client->authenticateFromResponse($url, $method, $result['headers']);
                 $result = $client->send($method, $url);
             }
 
-            if ($result['code'] === '200') {
+            if ($result['headers']['code'] === '200') {
                 $res = $result;
             }
         }

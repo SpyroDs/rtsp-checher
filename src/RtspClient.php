@@ -88,7 +88,7 @@ class RtspClient {
       $uri = sprintf('rtsp://%s:%s%s', $ip, $port, $route);
       try {
         $response = $this->send('DESCRIBE', $uri);
-        if ($response['code'] == '404') {
+        if ($response['headers']['code'] == '404') {
           continue;
         }
 
@@ -96,7 +96,7 @@ class RtspClient {
           'route'    => $uri,
           'response' => $response,
         ];
-      } catch (Exception $e) {
+      } catch (\Exception $e) {
         echo "ERROR MSG:".$e->getCode()."\n";
       }
     }
@@ -170,26 +170,40 @@ class RtspClient {
   }
 
   private function interpretResponse($response): array {
-    $return = [];
+    $result = [];
+    $blocks = preg_split('/\r\n\r\n/', $response);
 
-    $lines = preg_split('/\r\n/', $response);
-
-    foreach ($lines as $k => $v) {
-      if ($k == 0) {
-        $r = preg_split('/ /', $v);
-        $return['proto'] = (isset($r[0])) ? $r[0] : '';
-        $return['code'] = (isset($r[1])) ? $r[1] : '';
-        $return['msg'] = (isset($r[2])) ? $r[2] : '';
-      } else {
-        $r = preg_split('/: /', $v);
-        if (isset($r[0])) {
-          $return[$r[0]] = (isset($r[1])) ? $r[1] : '';
-        }
-      }
+    if (isset($blocks[0])) {
+        $result['headers'] = $this->parseResponseHeaders(preg_split('/\r\n/', $blocks[0]));
     }
 
-    return $return;
+    if (isset($blocks[1])) {
+        $result['sdp'] = preg_split("/(\r\n|\n|\r)/", $blocks[1]);
+    }
+
+
+    return $result;
   }
 
+  private function parseResponseHeaders(array $lines): array {
+      $result = [];
+      foreach ($lines as $k => $v) {
+          if ($k == 0) {
+              $r = preg_split('/ /', $v);
+              $result['proto'] = (isset($r[0])) ? $r[0] : '';
+              $result['code'] = (isset($r[1])) ? $r[1] : '';
+              $result['msg'] = (isset($r[2])) ? $r[2] : '';
+          } else {
+              $r = preg_split('/: /', $v);
+              if (isset($r[0])) {
+                  $result[$r[0]] = (isset($r[1])) ? $r[1] : '';
+              }
+          }
+      }
+
+      return $result;
+  }
 
 }
+
+
