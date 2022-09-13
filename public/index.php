@@ -61,11 +61,11 @@ $app->post('/rtsp/options', function (
     return rtspRequestHandler('OPTIONS', $request, $response);
 });
 
-$app->get('/rtsp/debug', function (
+$app->get('/', function (
     Request $request, Response $response,
 ): Response {
     $body = $response->getBody();
-    $body->write('OK');
+    $body->write('Index page');
 
     return $response->withBody($body);
 });
