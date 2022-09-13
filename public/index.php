@@ -8,10 +8,11 @@ use Slim\Factory\AppFactory;
 
 require __DIR__.'/../vendor/autoload.php';
 
+
 $app = AppFactory::create();
 $app->addBodyParsingMiddleware();
 $app->addRoutingMiddleware();
-$app->addErrorMiddleware(true, true, true);
+$app->addErrorMiddleware(false, false, false);
 
 
 function rtspRequestHandler(string $method, Request $request, Response $response): Response
