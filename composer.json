@@ -1,0 +1,12 @@
+{
+    "name": "admin/rtsp-checker",
+    "require": {
+        "slim/slim": "^4.10",
+        "slim/psr7": "^1.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "RtspChecker\\": "src/"
+        }
+    }
+}
