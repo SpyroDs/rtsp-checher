@@ -61,4 +61,13 @@ $app->post('/rtsp/options', function (
     return rtspRequestHandler('OPTIONS', $request, $response);
 });
 
+$app->get('/rtsp/debug', function (
+    Request $request, Response $response,
+): Response {
+    $body = $response->getBody();
+    $body->write('OK');
+
+    return $response->withBody($body);
+});
+
 $app->run();
