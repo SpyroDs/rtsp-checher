@@ -3,6 +3,7 @@
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use RtspChecker\AuthenticationMiddleware;
 use RtspChecker\RtspClient;
 use Slim\Factory\AppFactory;
 
@@ -13,6 +14,7 @@ $app = AppFactory::create();
 $app->addBodyParsingMiddleware();
 $app->addRoutingMiddleware();
 $app->addErrorMiddleware(false, false, false);
+$app->addMiddleware(new AuthenticationMiddleware());
 
 
 function rtspRequestHandler(string $method, Request $request, Response $response): Response
