@@ -11,6 +11,7 @@ class RtspClient {
   private string $user = '';
   private string $password = '';
   private $socket;
+  private $errors = [];
 
   public function init(string $url): bool {
     $parsed = parse_url($url);
@@ -25,8 +26,8 @@ class RtspClient {
 
     $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 
-    socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, ['sec' => 10, 'usec' => 0]);
-    socket_set_option($socket, SOL_SOCKET, SO_SNDTIMEO, ['sec' => 10, 'usec' => 0]);
+    socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, ['sec' => 2, 'usec' => 0]);
+    socket_set_option($socket, SOL_SOCKET, SO_SNDTIMEO, ['sec' => 2, 'usec' => 0]);
 
     $this->socket = $socket;
 

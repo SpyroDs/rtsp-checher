@@ -24,13 +24,13 @@ final class AuthenticationMiddleware implements MiddlewareInterface {
   ): ResponseInterface {
 
     if ($request->hasHeader('Authorization')
-      && (false != ($token = trim(
-          str_replace(
-            "Bearer",
-            "",
-            $request->getHeaderLine('Authorization')
-          )
-        )))
+      && ($token = trim(
+            str_replace(
+                "Bearer",
+                "",
+                $request->getHeaderLine('Authorization')
+            )
+        ))
     ) {
         if ($token !== getenv('ACCESS_TOKEN')) {
             return new Response(403);

@@ -2,7 +2,8 @@
     "name": "admin/rtsp-checker",
     "require": {
         "slim/slim": "^4.10",
-        "slim/psr7": "^1.5"
+        "slim/psr7": "^1.5",
+        "ext-sockets": "*"
     },
     "autoload": {
         "psr-4": {
